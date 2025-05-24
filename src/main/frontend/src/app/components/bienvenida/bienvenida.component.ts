@@ -1,4 +1,5 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { NombreService } from '../../services/nombre.service';
 
 @Component({
   selector: 'app-bienvenida',
@@ -13,13 +14,13 @@ export class BienvenidaComponent implements OnInit {
 
   @Output() readonly iniciarEvent = new EventEmitter<string>();
 
-  constructor() { }
+  constructor(private nombreService: NombreService) { }
 
   ngOnInit(): void {
   }
 
   iniciar(): void {
-
+    this.nombreService.setNombre(this.nombre);
     this.iniciarEvent.emit(this.nombre);
     this.mostrar = false;
   }

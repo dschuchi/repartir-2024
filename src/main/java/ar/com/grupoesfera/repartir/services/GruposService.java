@@ -63,8 +63,13 @@ public class GruposService {
 
     public Grupo agregarGasto(Long id, Gasto gasto) {
 
+        String nombre = gasto.getNombre();
         Grupo grupo = recuperar(id);
+        List<String> miembros = grupo.getMiembros();
         montos.acumularAlTotal(grupo, gasto);
+        if (nombre != null && !nombre.isBlank() && !miembros.contains(nombre)) {
+            miembros.add(nombre);
+        }
         repository.save(grupo);
         return grupo;
     }

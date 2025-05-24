@@ -14,7 +14,7 @@
         <td class="text-primary">{{grupo.id}}</td>
         <td>{{grupo.nombre}}</td>
         <td class="text-right">{{grupo.total | currency}}</td>
-        <td>
+        <td [id]="'miembros-' + grupo.id">
           <p-chip *ngFor="let miembro of grupo.miembros" [label]="miembro" icon="pi pi-user" styleClass="m-1"></p-chip>
         </td>
         <td>

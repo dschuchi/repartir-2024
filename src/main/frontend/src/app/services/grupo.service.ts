@@ -5,13 +5,16 @@ import { catchError } from 'rxjs/operators';
 import { Grupo } from '../model/grupo';
 import { Excepcion } from '../model/excepcion';
 import { Gasto } from '../model/gasto';
+import { NombreService } from './nombre.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GrupoService {
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private nombreService: NombreService) {
 
   }
 
@@ -34,8 +37,10 @@ export class GrupoService {
 
   agregarGasto(grupo: Grupo, monto: number): Observable<Grupo> {
 
+    const nombre = this.nombreService.getNombre();
     const nuevoGasto: Gasto = {
       monto,
+      nombre
     }
 
     return this.http.post<Grupo>(`/api/grupos/${grupo.id}/gastos`, nuevoGasto)

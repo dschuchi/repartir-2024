@@ -3,12 +3,12 @@ package ar.com.grupoesfera.repartir.steps.gastos;
 import ar.com.grupoesfera.repartir.steps.CucumberSteps;
 import ar.com.grupoesfera.repartir.steps.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.openqa.selenium.support.ui.ExpectedConditions.textMatches;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 public class AgregarGastosJourneySteps extends CucumberSteps {
@@ -46,6 +46,7 @@ public class AgregarGastosJourneySteps extends CucumberSteps {
     public void veLaConfirmación(String mensaje) {
 
         var wait = new WebDriverWait(driver, 2);
+        wait.until(textMatches(By.id("mensajesToast"), Pattern.compile("Éxito")));
         var mensajesToast = wait.until(visibilityOfElementLocated(By.id("mensajesToast")));
         assertThat(mensajesToast.getText())
                 .contains("Éxito")

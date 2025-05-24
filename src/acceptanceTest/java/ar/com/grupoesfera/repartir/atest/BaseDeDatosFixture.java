@@ -9,6 +9,8 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Profile("acceptanceTest")
@@ -49,14 +51,35 @@ public class BaseDeDatosFixture {
         estaVacia();
         var insert =
                 """
-                    INSERT INTO grupo (id, nombre, total)
-                    VALUES (<ID>, '<NOMBRE>', 0);
-                            
-                    INSERT INTO grupo_miembros (grupo_id, miembro)
-                    VALUES (<ID>, 'bob'), (<ID>, 'patricio')
-                """
-                .replaceAll("<ID>", String.valueOf(id))
-                .replaceAll("<NOMBRE>", nombre);
+                            INSERT INTO grupo (id, nombre, total)
+                            VALUES (<ID>, '<NOMBRE>', 0);
+                        
+                            INSERT INTO grupo_miembros (grupo_id, miembro)
+                            VALUES (<ID>, 'bob'), (<ID>, 'patricio')
+                        """
+                        .replaceAll("<ID>", String.valueOf(id))
+                        .replaceAll("<NOMBRE>", nombre);
+
+        var populator = new ResourceDatabasePopulator();
+        populator.addScript(new ByteArrayResource(insert.getBytes()));
+        populator.execute(dataSource);
+    }
+
+    public void existeUnGrupoConLosMiembros(int id, String nombre, List<String> miembros) {
+        estaVacia();
+
+        String miembrosInsert = miembros.stream()
+                .map(m -> String.format("(%d, '%s')", id, m))
+                .collect(Collectors.joining(", "));
+
+        String insert =
+                String.format("""
+                            INSERT INTO grupo (id, nombre, total)
+                            VALUES (%d, '%s', 0);
+                        
+                            INSERT INTO grupo_miembros (grupo_id, miembro)
+                            VALUES %s;
+                        """, id, nombre, miembrosInsert);
 
         var populator = new ResourceDatabasePopulator();
         populator.addScript(new ByteArrayResource(insert.getBytes()));
